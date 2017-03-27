@@ -14,6 +14,7 @@ program
   .option('-s, --service <name>', 'the name of the service to connect to (optional)')
   .option('-i, --insecure', 'use an insecure connection (default=false)', false)
   .option('-n, --nestedPackages <pgk[,pkg...]', 'allow nested packages on whitelist (default="")', "")
+  .option('-t, --token <token>', 'pass token as metadata (optional)', false)
   .parse(process.argv);
 
 
@@ -30,7 +31,8 @@ if (!program.address || program.address.indexOf(':') < 0) {
 try {
   grpcc(program.proto, program.directory, program.service, program.address, {
     insecure: program.insecure,
-    nestedPackages: program.nestedPackages && program.nestedPackages.split(",") || []
+    nestedPackages: program.nestedPackages && program.nestedPackages.split(",") || [],
+    token: program.token
   });
 } catch (e) {
   console.error(e);
