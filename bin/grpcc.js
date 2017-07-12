@@ -1,10 +1,14 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/env node
 
 'use strict';
 
 let program = require('commander');
 
 let grpcc = require('../lib');
+
+function parseMetadataList(val) {
+  return val.split(/,\s?/).map(meta => meta.split(/=\s?/));
+}
 
 program
   .version("0.0.1")
@@ -14,7 +18,7 @@ program
   .option('-s, --service <name>', 'the name of the service to connect to (optional)')
   .option('-i, --insecure', 'use an insecure connection (default=false)', false)
   .option('-n, --nestedPackages <pgk[,pkg...]', 'allow nested packages on whitelist (default="")', "")
-  .option('-t, --token <token>', 'pass token as metadata (optional)', false)
+  .option('-m --metadata <key=value[,key=value...]>', 'init metadata object with given variables (optional)', parseMetadataList, [])
   .parse(process.argv);
 
 
@@ -32,7 +36,8 @@ try {
   grpcc(program.proto, program.directory, program.service, program.address, {
     insecure: program.insecure,
     nestedPackages: program.nestedPackages && program.nestedPackages.split(",") || [],
-    token: program.token
+    token: program.token,
+    metadata: program.metadata
   });
 } catch (e) {
   console.error(e);
